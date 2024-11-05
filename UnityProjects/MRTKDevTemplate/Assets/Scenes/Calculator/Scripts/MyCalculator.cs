@@ -98,7 +98,9 @@ public class MyCalculator : MonoBehaviour
                             {
                                 if (float.TryParse(CalculatorExpression, out float parsedValue))
                                 {
-                                    CalculatorExpression = (parsedValue / 100).ToString();
+                                    float result = parsedValue / 100;
+                                    CalculatorExpression = result.ToString();
+                                    OnUpdateExpressionResult?.Invoke(result.ToString());
                                 }
                                 break;
                             }
@@ -106,7 +108,9 @@ public class MyCalculator : MonoBehaviour
                             {
                                 if (float.TryParse(CalculatorExpression, out float parsedValue))
                                 {
-                                    CalculatorExpression = (1 / parsedValue).ToString();
+                                    float result = 1 / parsedValue;
+                                    CalculatorExpression = result.ToString();
+                                    OnUpdateExpressionResult?.Invoke(result.ToString());
                                 }
                                 break;
                             }
@@ -114,7 +118,9 @@ public class MyCalculator : MonoBehaviour
                             {
                                 if (float.TryParse(CalculatorExpression, out float parsedValue))
                                 {
-                                    CalculatorExpression = (parsedValue * parsedValue).ToString();
+                                    float result = parsedValue * parsedValue;
+                                    CalculatorExpression = result.ToString();
+                                    OnUpdateExpressionResult?.Invoke(result.ToString());
                                 }
                                 break;
                             }
@@ -122,7 +128,9 @@ public class MyCalculator : MonoBehaviour
                             {
                                 if (float.TryParse(CalculatorExpression, out float parsedValue))
                                 {
-                                    CalculatorExpression = Mathf.Sqrt(parsedValue).ToString();
+                                    float result = Mathf.Sqrt(parsedValue);
+                                    CalculatorExpression = result.ToString();
+                                    OnUpdateExpressionResult?.Invoke(result.ToString());
                                 }
                                 break;
                             }
@@ -130,7 +138,9 @@ public class MyCalculator : MonoBehaviour
                             {
                                 if (float.TryParse(CalculatorExpression, out float parsedValue))
                                 {
-                                    CalculatorExpression = (-parsedValue).ToString();
+                                    float result = -parsedValue;
+                                    CalculatorExpression = result.ToString();
+                                    OnUpdateExpressionResult?.Invoke(result.ToString());
                                 }
                                 break;
                             }
