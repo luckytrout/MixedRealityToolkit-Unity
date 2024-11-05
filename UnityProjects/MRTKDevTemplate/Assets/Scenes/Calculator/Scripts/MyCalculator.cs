@@ -77,7 +77,7 @@ public class MyCalculator : MonoBehaviour
                         case "CE":
                             {
                                 CalculatorExpression = string.Empty;
-                                OnUpdateExpressionResult?.Invoke("0");
+                                OnUpdateExpressionDisplay?.Invoke("");
                                 break;
                             }
                         case "C":
@@ -95,53 +95,12 @@ public class MyCalculator : MonoBehaviour
                                 break;
                             }
                         case "%":
-                            {
-                                if (float.TryParse(CalculatorExpression, out float parsedValue))
-                                {
-                                    float result = parsedValue / 100;
-                                    CalculatorExpression = result.ToString();
-                                    OnUpdateExpressionResult?.Invoke(result.ToString());
-                                }
-                                break;
-                            }
                         case "1/x":
-                            {
-                                if (float.TryParse(CalculatorExpression, out float parsedValue))
-                                {
-                                    float result = 1 / parsedValue;
-                                    CalculatorExpression = result.ToString();
-                                    OnUpdateExpressionResult?.Invoke(result.ToString());
-                                }
-                                break;
-                            }
                         case "X<sup>2":
-                            {
-                                if (float.TryParse(CalculatorExpression, out float parsedValue))
-                                {
-                                    float result = parsedValue * parsedValue;
-                                    CalculatorExpression = result.ToString();
-                                    OnUpdateExpressionResult?.Invoke(result.ToString());
-                                }
-                                break;
-                            }
                         case "√x":
-                            {
-                                if (float.TryParse(CalculatorExpression, out float parsedValue))
-                                {
-                                    float result = Mathf.Sqrt(parsedValue);
-                                    CalculatorExpression = result.ToString();
-                                    OnUpdateExpressionResult?.Invoke(result.ToString());
-                                }
-                                break;
-                            }
                         case "+/-":
                             {
-                                if (float.TryParse(CalculatorExpression, out float parsedValue))
-                                {
-                                    float result = -parsedValue;
-                                    CalculatorExpression = result.ToString();
-                                    OnUpdateExpressionResult?.Invoke(result.ToString());
-                                }
+                                ApplyOperationToLastNumber(value.Caption, GetOperationFunc(value.Caption));
                                 break;
                             }
                         case ".":
@@ -163,6 +122,42 @@ public class MyCalculator : MonoBehaviour
         }
 
         OnUpdateExpressionDisplay?.Invoke(CalculatorExpression);
+    }
+
+    private void ApplyOperationToLastNumber(string operation, Func<float, float> operationFunc)
+    {
+        int lastOperatorIndex = CalculatorExpression.LastIndexOfAny(new char[] { '+', '-', '*', '/' });
+        string lastNumberStr = lastOperatorIndex == -1 ? CalculatorExpression : CalculatorExpression.Substring(lastOperatorIndex + 1);
+
+        if (float.TryParse(lastNumberStr, out float lastNumber))
+        {
+            float result = operationFunc(lastNumber);
+            CalculatorExpression = lastOperatorIndex == -1 ? result.ToString() : CalculatorExpression.Substring(0, lastOperatorIndex + 1) + result.ToString();
+            
+            if (lastOperatorIndex == -1)
+            {
+                OnUpdateExpressionResult?.Invoke(result.ToString());
+            }
+        }
+    }
+
+    private Func<float, float> GetOperationFunc(string operation)
+    {
+        switch (operation)
+        {
+            case "%":
+                return parsedValue => parsedValue / 100;
+            case "1/x":
+                return parsedValue => 1 / parsedValue;
+            case "X<sup>2":
+                return parsedValue => parsedValue * parsedValue;
+            case "√x":
+                return parsedValue => Mathf.Sqrt(parsedValue);
+            case "+/-":
+                return parsedValue => -parsedValue;
+            default:
+                throw new InvalidOperationException("Unsupported operation");
+        }
     }
 
     private void Start()
