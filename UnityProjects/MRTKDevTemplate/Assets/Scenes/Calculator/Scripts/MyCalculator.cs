@@ -22,6 +22,9 @@ public class MyCalculator : MonoBehaviour
 
     public delegate void UpdateExpressionResult(string value);
     public static event UpdateExpressionResult OnUpdateExpressionResult;
+
+    public delegate void UpdateHistory(string value);
+    public static event UpdateHistory OnUpdateHistory;
     #endregion
 
     [SerializeField] private string CalculatorExpression = string.Empty;
@@ -73,6 +76,7 @@ public class MyCalculator : MonoBehaviour
                                 
                                 // update result and reset expression display
                                 OnUpdateExpressionResult?.Invoke(r.ToString());
+                                OnUpdateHistory?.Invoke($"{CalculatorExpression} = {r}");
                                 CalculatorExpression = r.ToString();
                                 OnUpdateExpressionDisplay?.Invoke("");
                                 break;
@@ -89,6 +93,7 @@ public class MyCalculator : MonoBehaviour
                                 // clear both the expression and the result display
                                 CalculatorExpression = string.Empty;
                                 OnUpdateExpressionResult?.Invoke("0");
+                                OnUpdateHistory?.Invoke("");
                                 break;
                             }
                         case "←":
@@ -153,6 +158,7 @@ public class MyCalculator : MonoBehaviour
             {
                 // update here
                 OnUpdateExpressionResult?.Invoke(result.ToString());
+                OnUpdateHistory?.Invoke($"{operation.Replace("x", "")}({lastNumber}) = {result}");
             }
         }
     }

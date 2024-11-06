@@ -19,6 +19,7 @@ public class MyCalculatorUIManager : MonoBehaviour
 
     public TMP_Text tmpCalculatorExpressionDisplay;
     public TMP_Text tmpCalculatorResultDisplay;
+    public TMP_Text tmpHistoryResult;
 
     public Transform GridLayoutRoot;
     public GameObject CalculatorButtonPrefab;
@@ -94,11 +95,14 @@ public class MyCalculatorUIManager : MonoBehaviour
     };
     #endregion
 
+    private List<string> history = new List<string>();
+
     private void OnEnable()
     {
         MyCalculator.OnCalculatorStarted += MyCalculator_OnCalculatorStarted;
         MyCalculator.OnUpdateExpressionDisplay += MyCalculator_OnUpdateExpressionDisplay;
-        MyCalculator.OnUpdateExpressionResult += MyCalculator_OnUpdateExpressionResult;        
+        MyCalculator.OnUpdateExpressionResult += MyCalculator_OnUpdateExpressionResult;
+        MyCalculator.OnUpdateHistory += MyCalculator_OnUpdateHistory;
     }
 
     private void OnDisable()
@@ -106,6 +110,20 @@ public class MyCalculatorUIManager : MonoBehaviour
         MyCalculator.OnCalculatorStarted -= MyCalculator_OnCalculatorStarted;
         MyCalculator.OnUpdateExpressionDisplay -= MyCalculator_OnUpdateExpressionDisplay;
         MyCalculator.OnUpdateExpressionResult -= MyCalculator_OnUpdateExpressionResult;
+        MyCalculator.OnUpdateHistory -= MyCalculator_OnUpdateHistory;
+    }
+
+    private void MyCalculator_OnUpdateHistory(string value)
+    {
+        if (string.IsNullOrEmpty(value))
+        {
+            history.Clear();
+        }
+        else
+        {
+            history.Insert(0, value);
+        }
+        tmpHistoryResult.text = string.Join("\n", history);
     }
 
     private void MyCalculator_OnCalculatorStarted()
@@ -123,11 +141,12 @@ public class MyCalculatorUIManager : MonoBehaviour
         tmpCalculatorResultDisplay.text = value;
     }
 
-
     void ClearCalculatorDisplays()
     {
         tmpCalculatorExpressionDisplay.text = string.Empty;
         tmpCalculatorResultDisplay.text = "0";
+        tmpHistoryResult.text = string.Empty;
+        history.Clear();
     }
 
     // Start is called before the first frame update
