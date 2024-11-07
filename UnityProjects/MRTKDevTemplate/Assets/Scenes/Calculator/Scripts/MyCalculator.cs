@@ -158,7 +158,13 @@ public class MyCalculator : MonoBehaviour
             {
                 // update here
                 OnUpdateExpressionResult?.Invoke(result.ToString());
-                OnUpdateHistory?.Invoke($"{operation.Replace("x", "")}({lastNumber}) = {result}");
+                string historyOperation = operation switch
+                {
+                    "1/x" => $"1/({lastNumber})",
+                    "X<sup>2" => $"{lastNumber}^2",
+                    _ => $"{operation.Replace("x", "")}({lastNumber})"
+                };
+                OnUpdateHistory?.Invoke($"{historyOperation} = {result}");
             }
         }
     }
